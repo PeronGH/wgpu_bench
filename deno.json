@@ -1,0 +1,6 @@
+{
+  "tasks": {
+    "bench": "deno run webgpu_bandwidth.ts",
+    "check": "deno fmt --check && deno lint && deno check webgpu_bandwidth.ts"
+  }
+}
