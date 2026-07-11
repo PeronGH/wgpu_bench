@@ -1,3 +1,10 @@
+const full = Deno.args.includes("--full");
+for (const arg of Deno.args) {
+  if (arg !== "--full" && arg !== "--") {
+    throw new Error(`Unknown argument: ${arg}`);
+  }
+}
+
 const gpu = navigator.gpu;
 
 console.log("WebGPU device information\n");
@@ -41,6 +48,69 @@ console.log(`Max buffer size:            ${limits.maxBufferSize} bytes`);
 console.log(
   `Max workgroups/dimension:   ${limits.maxComputeWorkgroupsPerDimension}`,
 );
+
+if (full) {
+  const additionalLimits: Array<[string, number]> = [
+    ["Max texture dimension 1D", limits.maxTextureDimension1D],
+    ["Max texture dimension 2D", limits.maxTextureDimension2D],
+    ["Max texture dimension 3D", limits.maxTextureDimension3D],
+    ["Max texture array layers", limits.maxTextureArrayLayers],
+    ["Max bind groups", limits.maxBindGroups],
+    ["Max bindings/bind group", limits.maxBindingsPerBindGroup],
+    [
+      "Max dynamic uniform buffers/pipeline layout",
+      limits.maxDynamicUniformBuffersPerPipelineLayout,
+    ],
+    [
+      "Max dynamic storage buffers/pipeline layout",
+      limits.maxDynamicStorageBuffersPerPipelineLayout,
+    ],
+    [
+      "Max sampled textures/shader stage",
+      limits.maxSampledTexturesPerShaderStage,
+    ],
+    ["Max samplers/shader stage", limits.maxSamplersPerShaderStage],
+    [
+      "Max storage buffers/shader stage",
+      limits.maxStorageBuffersPerShaderStage,
+    ],
+    [
+      "Max storage textures/shader stage",
+      limits.maxStorageTexturesPerShaderStage,
+    ],
+    [
+      "Max uniform buffers/shader stage",
+      limits.maxUniformBuffersPerShaderStage,
+    ],
+    ["Max uniform buffer binding size", limits.maxUniformBufferBindingSize],
+    [
+      "Min uniform buffer offset alignment",
+      limits.minUniformBufferOffsetAlignment,
+    ],
+    [
+      "Min storage buffer offset alignment",
+      limits.minStorageBufferOffsetAlignment,
+    ],
+    ["Max vertex buffers", limits.maxVertexBuffers],
+    ["Max vertex attributes", limits.maxVertexAttributes],
+    ["Max vertex buffer array stride", limits.maxVertexBufferArrayStride],
+    ["Max inter-stage shader variables", limits.maxInterStageShaderVariables],
+    ["Max color attachments", limits.maxColorAttachments],
+    [
+      "Max color attachment bytes/sample",
+      limits.maxColorAttachmentBytesPerSample,
+    ],
+  ];
+
+  console.log("\nAdditional limits");
+  const labelWidth = Math.max(
+    ...additionalLimits.map(([label]) => label.length),
+  );
+  for (const [label, value] of additionalLimits) {
+    console.log(`${label.padEnd(labelWidth)}  ${value}`);
+  }
+  console.log(`\nPreferred canvas format: ${gpu.getPreferredCanvasFormat()}`);
+}
 
 console.log("\nAdapter features");
 console.log(features.length === 0 ? "(none)" : features.join("\n"));
